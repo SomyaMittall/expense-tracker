@@ -10,6 +10,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} /> // default route
+        <Route path="/dashboard" element={<Home />} /> // dashboard route
         <Route path="/expense" element={<Expense />} /> // expense route
         <Route path="/income" element={<Income />} /> // income route
         <Route path="*" element={<NotFound />} /> // catch all route for undefined paths
