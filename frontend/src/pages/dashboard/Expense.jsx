@@ -1,84 +1,15 @@
-// import React, { useEffect, useState } from "react";
-// import DashboardLayout from "../../components/layouts/DashboardLayout";
-// import ExpenseForm from "../../components/expense/ExpenseForm";
-// import ExpenseList from "../../components/expense/ExpenseList";
-// import ExpenseSummary from "../../components/expense/ExpenseSummary";
-// import ChartComponent from "../../components/expense/ChartComponent";
-// import {
-//   addExpense,
-//   getExpenses,
-//   deleteExpense,
-// } from "../../services/expenseService";
-
-// const Expense = () => {
-//   const [expenses, setExpenses] = useState([]);
-
-//   useEffect(() => {
-//     setExpenses(getExpenses());
-//   }, []);
-
-//   const handleAdd = (data) => {
-//     const updated = addExpense(data);
-//     setExpenses(updated);
-//   };
-
-//   const handleDelete = (id) => {
-//     const updated = deleteExpense(id);
-//     setExpenses(updated);
-//   };
-
-//   return (
-//     <DashboardLayout activeMenu="Expense">
-//       <div className="w-full min-h-screen bg-slate-50 px-6 md:px-10 py-2 overflow-y-auto space-y-10">
-
-//         {/* 🔹 Form + Chart Section */}
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-//           {/* Form Card */}
-//           <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col justify-between">
-//             <h2 className="text-xl font-semibold text-gray-800 mb-4">Add Expense</h2>
-//             <div className="flex-1 flex flex-col justify-center">
-//               <ExpenseForm onAdd={handleAdd} />
-//             </div>
-//           </div>
-
-//           {/* Chart Card */}
-//           <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-//             <h2 className="text-xl font-semibold text-gray-800 mb-15">Expense Chart</h2>
-//             <ChartComponent expenses={expenses} />
-//           </div>
-//         </div>
-
-//         {/* 🔹 Summary Section */}
-//         <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-//           <h2 className="text-xl font-semibold text-gray-800 mb-4">Summary</h2>
-//           <ExpenseSummary expenses={expenses} />
-//         </div>
-
-//         {/* 🔹 Expense List */}
-//         <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-10">
-//           <h2 className="text-xl font-semibold text-gray-800 mb-4">Expense List</h2>
-//           <ExpenseList expenses={expenses} onDelete={handleDelete} />
-//         </div>
-//       </div>
-//     </DashboardLayout>
-//   );
-// };
-
-// export default Expense;
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
-import ExpenseForm from "../../components/expense/ExpenseForm";
-import ExpenseList from "../../components/expense/ExpenseList";
-import ExpenseSummary from "../../components/expense/ExpenseSummary";
-import ChartComponent from "../../components/expense/ChartComponent";
-import {
-  addExpense,
-  getExpenses,
-  deleteExpense,
-} from "../../services/expenseService";
+import IncomeForm from "../../components/income/IncomeForm";
+import IncomeList from "../../components/income/IncomeList";
+import { addIncome, getIncomes, deleteIncome } from "../../services/incomeService";
 
-const Expense = () => {
-  const [expenses, setExpenses] = useState([]);
+/**
+ * @component Income
+ * @description Income management page for adding, filtering, and viewing records.
+ */
+const Income = () => {
+  const [incomes, setIncomes] = useState([]);
   const [filter, setFilter] = useState({
     category: "",
     month: "",
@@ -86,104 +17,99 @@ const Expense = () => {
     date: "",
   });
 
+  // Load saved incomes when component mounts
   useEffect(() => {
-    setExpenses(getExpenses());
+    const data = getIncomes();
+    setIncomes(data);
   }, []);
 
+  /**
+   * @function handleAdd
+   * @description Adds new income data and updates the list
+   * @param {Object} data - Income form input data
+   */
   const handleAdd = (data) => {
-    const updated = addExpense(data);
-    setExpenses(updated);
+    const updated = addIncome(data);
+    setIncomes(updated);
   };
 
+  /**
+   * @function handleDelete
+   * @description Removes an income record by ID
+   * @param {string} id - Unique ID of the income record
+   */
   const handleDelete = (id) => {
-    const updated = deleteExpense(id);
-    setExpenses(updated);
+    const updated = deleteIncome(id);
+    setIncomes(updated);
   };
 
-  // 🔹 Apply Filters
-  const filteredExpenses = expenses.filter((expense) => {
-    const expenseDate = new Date(expense.date);
-    const expenseMonth = expenseDate.getMonth() + 1;
-    const expenseYear = expenseDate.getFullYear();
+  // Filter incomes based on category, month, year, or date
+  const filteredIncomes = incomes.filter((income) => {
+    const dateObj = new Date(income.date);
+    const month = dateObj.getMonth() + 1;
+    const year = dateObj.getFullYear();
 
     return (
-      (!filter.category || expense.category === filter.category) &&
-      (!filter.month || expenseMonth === parseInt(filter.month)) &&
-      (!filter.year || expenseYear === parseInt(filter.year)) &&
-      (!filter.date || expense.date === filter.date)
+      (!filter.category || income.category === filter.category) &&
+      (!filter.month || month === Number(filter.month)) &&
+      (!filter.year || year === Number(filter.year)) &&
+      (!filter.date || income.date === filter.date)
     );
   });
 
   return (
-    <DashboardLayout activeMenu="Expense">
-      <div className="w-full min-h-screen bg-slate-50 px-6 md:px-10 py-2 overflow-y-auto space-y-10">
+    <DashboardLayout activeMenu="Income">
+      <div className="w-full min-h-screen bg-gray-50 px-6 md:px-10 py-6 overflow-y-auto space-y-10">
 
-        {/* 🔹 Form + Chart Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* Form Card */}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col justify-between">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Add Expense</h2>
-            <div className="flex-1 flex flex-col justify-center">
-              <ExpenseForm onAdd={handleAdd} />
-            </div>
-          </div>
-
-          {/* Chart Card */}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-15">Expense Chart</h2>
-            <ChartComponent expenses={filteredExpenses} />
-          </div>
+        {/* Income Entry Form */}
+        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Add Income</h2>
+          <IncomeForm onAdd={handleAdd} />
         </div>
 
-        {/* 🔹 Summary Section */}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Summary by Category</h2>
-          <ExpenseSummary expenses={filteredExpenses} />
-        </div>
-
-        {/* 🔹 Expense List with Filters */}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-10">
+        {/* Income List and Filter Section */}
+        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-3 md:mb-0">Expense List</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3 md:mb-0">Income Records</h2>
 
-            {/* Filter Inputs */}
+            {/* Filters */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <input
                 type="text"
-                placeholder="Category"
+                placeholder="Source"
                 value={filter.category}
                 onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-violet-500"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-violet-400 outline-none"
               />
               <input
                 type="number"
                 placeholder="Month (1-12)"
                 value={filter.month}
                 onChange={(e) => setFilter({ ...filter, month: e.target.value })}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-violet-500"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-violet-400 outline-none"
               />
               <input
                 type="number"
                 placeholder="Year (e.g. 2025)"
                 value={filter.year}
                 onChange={(e) => setFilter({ ...filter, year: e.target.value })}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-violet-500"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-violet-400 outline-none"
               />
               <input
                 type="date"
                 value={filter.date}
                 onChange={(e) => setFilter({ ...filter, date: e.target.value })}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-violet-500"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-violet-400 outline-none"
               />
             </div>
           </div>
 
-          {/* Expense Table */}
-          <ExpenseList expenses={filteredExpenses} onDelete={handleDelete} />
+          {/* Income Table */}
+          <IncomeList incomes={filteredIncomes} onDelete={handleDelete} />
         </div>
       </div>
     </DashboardLayout>
   );
 };
 
-export default Expense;
+export default Income;
